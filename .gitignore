@@ -1,0 +1,24 @@
+# dataset
+dataset/
+dataset
+/datasets/*
+
+# checkpoints
+checkpoints/
+checkpoints
+/checkpoints/*
+
+*.png
+*.json
+*.jpg
+
+# pytorch/python/numpy formats
+*.pth
+*.pkl
+*.npy
+*.ts
+model_ts*.txt
+
+# ipython/jupyter notebooks
+*.ipynb
+**/.ipynb_checkpoints/
