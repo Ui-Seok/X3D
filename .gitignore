@@ -2,6 +2,7 @@
 dataset/
 dataset
 /datasets/*
+vis/
 
 # checkpoints
 checkpoints/
@@ -11,6 +12,9 @@ checkpoints
 *.png
 *.json
 *.jpg
+*.log
+*.mp4
+*.avi
 
 # pytorch/python/numpy formats
 *.pth

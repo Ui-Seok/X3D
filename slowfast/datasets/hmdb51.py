@@ -46,7 +46,7 @@ class Hmdb51(data.Dataset):
                 cfg.TEST.NUM_ENSEMBLE_VIEWS * cfg.TEST.NUM_SPATIAL_CROPS
             )
 
-        logger.info("Constructing Kinetics {}...".format(mode))
+        logger.info("Constructing Hmdb51 {}...".format(mode))
         #self._construct_loader()
         
         temp = pd.read_csv("/home/seok/Desktop/code/X3D/slowfast/dataset/train.csv")
@@ -447,3 +447,7 @@ class Hmdb51(data.Dataset):
 
     def __len__(self):
         return len(self.label)
+    
+    @property
+    def num_videos(self):
+        return len(self._path_to_videos)
