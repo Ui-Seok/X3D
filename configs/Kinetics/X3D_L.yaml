@@ -15,12 +15,12 @@ TEST:
   ENABLE: False
   DATASET: hmdb51
   BATCH_SIZE: 32
-  CHECKPOINT_FILE_PATH: './checkpoints/hmdb51_l.pyth'  # this
+  CHECKPOINT_FILE_PATH: './checkpoints/x3d_l.pyth'  # this
   # NUM_SPATIAL_CROPS: 1
   NUM_SPATIAL_CROPS: 3
 DATA:
-  NUM_FRAMES: 10
-  SAMPLING_RATE: 2
+  NUM_FRAMES: 16
+  SAMPLING_RATE: 5
   TRAIN_JITTER_SCALES: [356, 446]
   TRAIN_CROP_SIZE: 312
   # TEST_CROP_SIZE: 312 # use if TEST.NUM_SPATIAL_CROPS: 1
@@ -47,7 +47,7 @@ SOLVER:
   WARMUP_START_LR: 0.01
   OPTIMIZING_METHOD: sgd
 MODEL:
-  NUM_CLASSES: 51  # this
+  NUM_CLASSES: 400  # this
   ARCH: x3d
   MODEL_NAME: X3D
   LOSS_FUNC: cross_entropy
@@ -60,9 +60,9 @@ RNG_SEED: 0
 OUTPUT_DIR: .
 DEMO:
   ENABLE: True
-  LABEL_FILE_PATH: ./dataset/hmdb_51_class.json  # this
-  INPUT_VIDEO: ./dataset/Atlantis-__Hit_Me_With_Your_Rhythm_Stick__hit_u_cm_np1_fr_bad_2.avi
-  OUTPUT_FILE: ./vis/Atlantis-__Hit_Me_With_Your_Rhythm_Stick__hit_u_cm_np1_fr_bad_2.avi
+  LABEL_FILE_PATH: ./dataset/kinetics_400_class.json  # this
+  INPUT_VIDEO: ./dataset/Shooting003_x264.mp4
+  OUTPUT_FILE: ./vis/Shooting003_x264.mp4
   THREAD_ENABLE: False
   NUM_VIS_INSTANCES: 2
   NUM_CLIPS_SKIP: 0

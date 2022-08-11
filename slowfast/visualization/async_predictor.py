@@ -2,6 +2,7 @@
 # Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved.
 
 import atexit
+from tarfile import PAX_NUMBER_FIELDS
 import numpy as np
 import queue
 import torch
@@ -143,13 +144,13 @@ class AsyncVis:
             Run visualization asynchronously.
             """
             while True:
-                task = self.task_queue.get()
+                task, preds = self.task_queue.get()
                 if isinstance(task, _StopToken):
                     break
 
                 frames = draw_predictions(task, self.video_vis)
                 task.frames = np.array(frames)
-                self.result_queue.put(task)
+                self.result_queue.put((task, preds))
 
     def __init__(self, video_vis, n_workers=None):
         """
@@ -180,7 +181,7 @@ class AsyncVis:
 
         atexit.register(self.shutdown)
 
-    def put(self, task):
+    def put(self, task, preds):
         """
         Add the new task to task queue.
         Args:
@@ -188,7 +189,7 @@ class AsyncVis:
                 the necessary information for action prediction. (e.g. frames, boxes, predictions)
         """
         self.put_id += 1
-        self.task_queue.put(task)
+        self.task_queue.put((task, preds)) # (task, preds)
 
     def get(self):
         """
@@ -197,18 +198,18 @@ class AsyncVis:
         """
         get_idx = self.get_indices_ls[0]
         if self.result_data.get(get_idx) is not None:
-            res = self.result_data[get_idx]
+            res, preds = self.result_data[get_idx]
             del self.result_data[get_idx]
             del self.get_indices_ls[0]
-            return res
+            return res, preds
 
         while True:
-            res = self.result_queue.get(block=False)
+            res, preds = self.result_queue.get(block=False)
             idx = res.id
             if idx == get_idx:
                 del self.get_indices_ls[0]
-                return res
-            self.result_data[idx] = res
+                return res, preds
+            self.result_data[idx] = (res, preds)
 
     def __call__(self, task):
         """
@@ -219,7 +220,7 @@ class AsyncVis:
 
     def shutdown(self):
         for _ in self.procs:
-            self.task_queue.put(_StopToken())
+            self.task_queue.put((_StopToken(), ""))
 
     @property
     def result_available(self):

@@ -78,17 +78,18 @@ def run_demo(cfg, frame_provider):
 
         model.put(task)
         try:
-            task = model.get()
+            task, preds = model.get()
+            
             num_task -= 1
-            yield task
+            yield task, preds
         except IndexError:
             continue
 
     while num_task != 0:
         try:
-            task = model.get()
+            task, preds = model.get()
             num_task -= 1
-            yield task
+            yield task, preds
         except IndexError:
             continue
 
@@ -110,8 +111,8 @@ def demo(cfg):
             frame_provider = ThreadVideoManager(cfg)
         else:
             frame_provider = VideoManager(cfg)
-
-        for task in tqdm.tqdm(run_demo(cfg, frame_provider)):
+        for task, preds in tqdm.tqdm(run_demo(cfg, frame_provider)):
+            # use preds
             frame_provider.display(task)
 
         frame_provider.join()

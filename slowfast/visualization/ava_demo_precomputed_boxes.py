@@ -149,9 +149,7 @@ class AVAVisualizerWithPrecomputedBox:
         cu.load_test_checkpoint(self.cfg, model)
         logger.info("Finish loading model weights")
         logger.info("Start making predictions for precomputed boxes.")
-        for keyframe_idx, boxes_and_labels in tqdm.tqdm(
-            self.pred_boxes.items()
-        ):
+        for keyframe_idx, boxes_and_labels in self.pred_boxes.items():
             inputs = self.get_input_clip(keyframe_idx)
             boxes = boxes_and_labels[0]
             boxes = torch.from_numpy(np.array(boxes)).float()
@@ -182,6 +180,8 @@ class AVAVisualizerWithPrecomputedBox:
                 box_inputs = box_inputs.cuda()
 
             preds = model(inputs, box_inputs)
+            
+            logger.info(preds.shape)
 
             preds = preds.detach()
 
@@ -311,8 +311,10 @@ class AVAVisualizerWithPrecomputedBox:
                 self.display(frame)
 
     def __call__(self):
+        print('A')
         self.get_predictions()
         self.draw_video()
+
 
     def display(self, frame):
         """

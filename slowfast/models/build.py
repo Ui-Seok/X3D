@@ -41,6 +41,9 @@ def build_model(cfg, gpu_id=None):
 
     # Construct the model
     name = cfg.MODEL.MODEL_NAME
+    print('-----------')
+    print(MODEL_REGISTRY)
+    print('-----------')
     model = MODEL_REGISTRY.get(name)(cfg)
 
     if cfg.BN.NORM_TYPE == "sync_batchnorm_apex":

@@ -113,7 +113,7 @@ class Predictor:
         if bboxes is not None:
             task.add_bboxes(bboxes[:, 1:])
 
-        return task
+        return task, preds
 
 
 class ActionPredictor:
@@ -139,20 +139,24 @@ class ActionPredictor:
             task (TaskInfo object): task object that contain
                 the necessary information for action prediction. (e.g. frames, boxes)
         """
-        task = self.predictor(task)
+        # prediction task = frame, pred = prediction
+        task, preds = self.predictor(task)
+
         self.async_vis.get_indices_ls.append(task.id)
-        self.async_vis.put(task)
+
+        
+        self.async_vis.put(task, preds)
 
     def get(self):
         """
         Get the visualized clips if any.
         """
         try:
-            task = self.async_vis.get()
+            task, preds = self.async_vis.get()
         except (queue.Empty, IndexError):
             raise IndexError("Results are not available yet.")
 
-        return task
+        return (task, preds)
 
 
 class Detectron2Predictor:
