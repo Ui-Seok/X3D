@@ -19,6 +19,7 @@ checkpoints
 # pytorch/python/numpy formats
 *.pth
 *.pkl
+*.npy
 *.ts
 model_ts*.txt
 

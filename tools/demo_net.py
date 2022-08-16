@@ -36,7 +36,7 @@ def run_demo(cfg, frame_provider):
     logging.setup_logging(cfg.OUTPUT_DIR)
     # Print config.
     logger.info("Run demo with config:")
-    logger.info(cfg)
+    # logger.info(cfg)
     common_classes = (
         cfg.DEMO.COMMON_CLASS_NAMES
         if len(cfg.DEMO.LABEL_FILE_PATH) != 0
@@ -96,6 +96,13 @@ def run_demo(cfg, frame_provider):
 
 
 def demo(cfg):
+    file_name = [
+                #  'Abuse', 'Arrest', 'Arson', 'Assault', 
+                 'Burglary', 
+                 'Explosion', 'Fighting', 'RoadAccidents', 'Robbery', 
+                 'Shooting', 'Shoplifting', 'Stealing', 'Vandalism', 
+                 'Testing_Normal', 'Training_Normal'
+                 ]
     """
     Run inference on an input video or stream from webcam.
     Args:
@@ -103,30 +110,42 @@ def demo(cfg):
             slowfast/config/defaults.py
     """
     # AVA format-specific visualization with precomputed boxes.
-    for video_name in glob.glob('./dataset/test/*.mp4'):
-        vd_name = video_name.split('/')[-1]
-        vd = vd_name.split('.')[0]
-        print('vd_name:', vd_name)
-        cfg.DEMO.INPUT_VIDEO = f'./dataset/test/{vd_name}'
-        cfg.DEMO.OUTPUT_FILE = f'./vis/test/{vd_name}'
-        if cfg.DETECTION.ENABLE and cfg.DEMO.PREDS_BOXES != "":
-            precomputed_box_vis = AVAVisualizerWithPrecomputedBox(cfg)
-            precomputed_box_vis()
-        else:
-            start = time.time()
-            result = []
-            if cfg.DEMO.THREAD_ENABLE:
-                frame_provider = ThreadVideoManager(cfg)
+    for vdf in file_name:
+        print('=======================================')
+        print('=======================================')
+        print(f'======== START {vdf} ========')
+        print('=======================================')
+        print('=======================================')
+        video_counts = len(glob.glob(f'./dataset/UCF_Crime/{vdf}/*.mp4'))
+        count = 1
+        for video_name in glob.glob(f'./dataset/UCF_Crime/{vdf}/*.mp4'):
+            vd_name = video_name.split('/')[-1]
+            vd = vd_name.split('.')[0]
+            print('vd_name:', vd_name)
+            cfg.DEMO.INPUT_VIDEO = f'./dataset/UCF_Crime/{vdf}/{vd_name}'
+            cfg.DEMO.OUTPUT_FILE = f'./vis/{vdf}/{vd_name}'
+            if cfg.DETECTION.ENABLE and cfg.DEMO.PREDS_BOXES != "":
+                precomputed_box_vis = AVAVisualizerWithPrecomputedBox(cfg)
+                precomputed_box_vis()
             else:
-                frame_provider = VideoManager(cfg)
-            for task, preds in tqdm.tqdm(run_demo(cfg, frame_provider)):
-                # use preds
-                plus = np.array(preds)
-                result.append(plus.squeeze())
-                frame_provider.display(task)
+                print('===================================')
+                print(f'Processing: {count} / {video_counts}')
+                print('===================================')
+                count += 1
+                start = time.time()
+                result = []
+                if cfg.DEMO.THREAD_ENABLE:
+                    frame_provider = ThreadVideoManager(cfg)
+                else:
+                    frame_provider = VideoManager(cfg)
+                for task, preds in tqdm.tqdm(run_demo(cfg, frame_provider)):
+                    # use preds
+                    plus = np.array(preds)
+                    result.append(plus.squeeze())
+                    frame_provider.display(task)
 
-            result = np.asarray(result)
-            np.save(f'./result/{vd}.npy', result)
-            frame_provider.join()
-            frame_provider.clean()
-            logger.info("Finish demo in: {}".format(time.time() - start))
+                result = np.asarray(result[:32])
+                np.save(f'./result/{vdf}/{vd}.npy', result)
+                frame_provider.join()
+                frame_provider.clean()
+                logger.info("Finish demo in: {}".format(time.time() - start))
