@@ -5,6 +5,7 @@ import numpy as np
 import time
 import torch
 import tqdm
+import glob
 
 from slowfast.utils import logging
 from slowfast.visualization.async_predictor import AsyncDemo, AsyncVis
@@ -102,19 +103,30 @@ def demo(cfg):
             slowfast/config/defaults.py
     """
     # AVA format-specific visualization with precomputed boxes.
-    if cfg.DETECTION.ENABLE and cfg.DEMO.PREDS_BOXES != "":
-        precomputed_box_vis = AVAVisualizerWithPrecomputedBox(cfg)
-        precomputed_box_vis()
-    else:
-        start = time.time()
-        if cfg.DEMO.THREAD_ENABLE:
-            frame_provider = ThreadVideoManager(cfg)
+    for video_name in glob.glob('./dataset/test/*.mp4'):
+        vd_name = video_name.split('/')[-1]
+        vd = vd_name.split('.')[0]
+        print('vd_name:', vd_name)
+        cfg.DEMO.INPUT_VIDEO = f'./dataset/test/{vd_name}'
+        cfg.DEMO.OUTPUT_FILE = f'./vis/test/{vd_name}'
+        if cfg.DETECTION.ENABLE and cfg.DEMO.PREDS_BOXES != "":
+            precomputed_box_vis = AVAVisualizerWithPrecomputedBox(cfg)
+            precomputed_box_vis()
         else:
-            frame_provider = VideoManager(cfg)
-        for task, preds in tqdm.tqdm(run_demo(cfg, frame_provider)):
-            # use preds
-            frame_provider.display(task)
+            start = time.time()
+            result = []
+            if cfg.DEMO.THREAD_ENABLE:
+                frame_provider = ThreadVideoManager(cfg)
+            else:
+                frame_provider = VideoManager(cfg)
+            for task, preds in tqdm.tqdm(run_demo(cfg, frame_provider)):
+                # use preds
+                plus = np.array(preds)
+                result.append(plus.squeeze())
+                frame_provider.display(task)
 
-        frame_provider.join()
-        frame_provider.clean()
-        logger.info("Finish demo in: {}".format(time.time() - start))
+            result = np.asarray(result)
+            np.save(f'./result/{vd}.npy', result)
+            frame_provider.join()
+            frame_provider.clean()
+            logger.info("Finish demo in: {}".format(time.time() - start))

@@ -7,6 +7,7 @@ import queue
 import threading
 import time
 import cv2
+import math
 
 import slowfast.utils.logging as logging
 from slowfast.visualization.utils import TaskInfo
@@ -36,7 +37,12 @@ class VideoManager:
         self.display_width = cfg.DEMO.DISPLAY_WIDTH
         self.display_height = cfg.DEMO.DISPLAY_HEIGHT
 
+        # for video in
         self.cap = cv2.VideoCapture(self.source)
+        total_length = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        print('=============================================')
+        print('total_fps:', total_length)
+        print('=============================================')
 
         if self.display_width > 0 and self.display_height > 0:
             self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, self.display_width)
@@ -60,7 +66,8 @@ class VideoManager:
         self.id = -1
         self.buffer = []
         self.buffer_size = cfg.DEMO.BUFFER_SIZE
-        self.seq_length = cfg.DATA.NUM_FRAMES * cfg.DATA.SAMPLING_RATE
+        # self.seq_length = cfg.DATA.NUM_FRAMES * cfg.DATA.SAMPLING_RATE
+        self.seq_length = (total_length // 32)
         self.test_crop_size = cfg.DATA.TEST_CROP_SIZE
         self.clip_vis_size = cfg.DEMO.CLIP_VIS_SIZE
 
