@@ -96,12 +96,23 @@ def run_demo(cfg, frame_provider):
 
 
 def demo(cfg):
+    # data file_name(UCF-Crime)
     file_name = [
-                #  'Abuse', 'Arrest', 'Arson', 'Assault', 
-                 'Burglary', 
-                 'Explosion', 'Fighting', 'RoadAccidents', 'Robbery', 
-                 'Shooting', 'Shoplifting', 'Stealing', 'Vandalism', 
-                 'Testing_Normal', 'Training_Normal'
+                # 'Abuse', 
+                # 'Arrest', 
+                # 'Arson', 
+                # 'Assault', 
+                # 'Burglary', 
+                # 'Explosion', 
+                # 'Fighting', 
+                # 'RoadAccidents', 
+                # 'Robbery', 
+                # 'Shooting', 
+                #  'Shoplifting', 
+                #  'Stealing', 
+                # 'Vandalism', 
+                # 'Testing_Normal', 
+                'Training_Normal'
                  ]
     """
     Run inference on an input video or stream from webcam.
@@ -110,18 +121,24 @@ def demo(cfg):
             slowfast/config/defaults.py
     """
     # AVA format-specific visualization with precomputed boxes.
+    # vdf = Video Data Folder name
     for vdf in file_name:
         print('=======================================')
         print('=======================================')
-        print(f'======== START {vdf} ========')
+        print(f'=========== START {vdf} ===========')
         print('=======================================')
         print('=======================================')
-        video_counts = len(glob.glob(f'./dataset/UCF_Crime/{vdf}/*.mp4'))
+        # Data folder path
+        # vd_f = Video Data Folder path
+        vd_f = sorted(glob.glob(f'./dataset/UCF_Crime/{vdf}/*.mp4'))
+        video_counts = len(vd_f)
         count = 1
-        for video_name in glob.glob(f'./dataset/UCF_Crime/{vdf}/*.mp4'):
+        for video_name in vd_f:
             vd_name = video_name.split('/')[-1]
+            # vd = video name
             vd = vd_name.split('.')[0]
             print('vd_name:', vd_name)
+            # input video path & output video path
             cfg.DEMO.INPUT_VIDEO = f'./dataset/UCF_Crime/{vdf}/{vd_name}'
             cfg.DEMO.OUTPUT_FILE = f'./vis/{vdf}/{vd_name}'
             if cfg.DETECTION.ENABLE and cfg.DEMO.PREDS_BOXES != "":
