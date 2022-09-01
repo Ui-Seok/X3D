@@ -356,7 +356,8 @@ def load_checkpoint(
                 scaler.load_state_dict(checkpoint["scaler_state"])
         else:
             epoch = -1
-    return epoch
+    # If you continue train model change 0 to epoch
+    return 0
 
 
 def sub_to_normal_bn(sd):
