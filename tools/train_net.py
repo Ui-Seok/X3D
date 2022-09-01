@@ -4,6 +4,7 @@
 """Train a video classification model."""
 
 import math
+from re import L
 import numpy as np
 import pprint
 import torch
@@ -82,7 +83,6 @@ def train_epoch(
         misc.frozen_bn_stats(model)
     # Explicitly declare reduction to mean.
     loss_fun = losses.get_loss_func(cfg.MODEL.LOSS_FUNC)(reduction="mean")
-
     for cur_iter, (inputs, labels, index, time, meta) in enumerate(
         train_loader
     ):
@@ -145,7 +145,6 @@ def train_epoch(
             labels = torch.zeros(
                 preds.size(0), dtype=labels.dtype, device=labels.device
             )
-
         if cfg.MODEL.MODEL_NAME == "ContrastiveModel" and partial_loss:
             loss = partial_loss
         else:
@@ -618,6 +617,19 @@ def train(cfg):
         start_epoch = checkpoint_epoch + 1
     else:
         start_epoch = 0
+
+    # Change Class_num 400 -> 51(Fine Tuning)
+    model.head.projection = torch.nn.Linear(2048, 51).to(device='cuda:0')
+
+    # print('+' * 100)
+    # Freezing Layer
+    ct = 0
+    for child in model.children():
+        ct += 1
+        print(ct)
+        if ct != 6:
+            for param in child.parameters(recurse = False):
+                param.requires_grad = False
 
     # Create the video train and val loaders.
     train_loader = loader.construct_loader(cfg, "train")
