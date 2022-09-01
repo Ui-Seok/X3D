@@ -46,7 +46,7 @@ _C.CONTRASTIVE.INTERP_MEMORY = False
 _C.CONTRASTIVE.MEM_TYPE = "1d"
 
 # number of classes for online kNN evaluation
-_C.CONTRASTIVE.NUM_CLASSES_DOWNSTREAM = 400
+_C.CONTRASTIVE.NUM_CLASSES_DOWNSTREAM = 51
 
 # use an MLP projection with these num layers
 _C.CONTRASTIVE.NUM_MLP_LAYERS = 1
