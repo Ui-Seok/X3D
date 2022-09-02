@@ -1,5 +1,5 @@
 TRAIN:
-  ENABLE: True # default True
+  ENABLE: False # default True
   DATASET: hmdb51
   BATCH_SIZE: 8
   EVAL_PERIOD: 10
@@ -41,7 +41,7 @@ BN:
 SOLVER:
   BASE_LR: 0.05 # 1 machine
   BASE_LR_SCALE_NUM_SHARDS: True
-  MAX_EPOCH: 20
+  MAX_EPOCH: 15
   LR_POLICY: cosine
   WEIGHT_DECAY: 5e-5
   WARMUP_EPOCHS: 35.0
@@ -60,7 +60,7 @@ NUM_GPUS: 1
 RNG_SEED: 0
 OUTPUT_DIR: .
 DEMO:
-  ENABLE: False
+  ENABLE: True
   LABEL_FILE_PATH: ./dataset/hmdb_51_class.json  # this
   INPUT_VIDEO: "./dataset/Assault018_x264.mp4"
   OUTPUT_FILE: "./vis/test01.mp4"

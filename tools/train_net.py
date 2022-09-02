@@ -627,7 +627,7 @@ def train(cfg):
     for child in model.children():
         ct += 1
         print(ct)
-        if ct != 6:
+        if ct != 5:
             for param in child.parameters(recurse = False):
                 param.requires_grad = False
 

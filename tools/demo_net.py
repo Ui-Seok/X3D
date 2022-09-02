@@ -98,7 +98,7 @@ def run_demo(cfg, frame_provider):
 def demo(cfg):
     # data file_name(UCF-Crime)
     file_name = [
-                # 'Abuse', 
+                'Abuse', 
                 # 'Arrest', 
                 # 'Arson', 
                 # 'Assault', 
@@ -112,7 +112,7 @@ def demo(cfg):
                 #  'Stealing', 
                 # 'Vandalism', 
                 # 'Testing_Normal', 
-                'Training_Normal'
+                # 'Training_Normal'
                  ]
     """
     Run inference on an input video or stream from webcam.
